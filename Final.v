@@ -144,4 +144,12 @@ Fixpoint orient_molecule (m1 m2 m3 : Ion) (b1 b2 : nat) : bool :=
     end.
   
 
-Theorem 
+Theorem Valence_Filled : forall (x y z: Ion)(n m:nat), (*Can we even say that? Can we say any nat?*)
+    orient_molecule (x y z)(n m) -> 
+        andb((fully_bonded z m))andb((fully_bonded x n)(fully_bonded y (n+m))).
+
+        (*AKA:
+            If our recursive function returns TRUE, then applying values n and m for bond
+            representation to the function "fully_bonded" will also return true for
+            all three ions
+        *)
