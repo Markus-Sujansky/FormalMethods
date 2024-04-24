@@ -29,28 +29,13 @@ Definition OuterShell (i : Ion) : nat :=
     | VI _ _ _ => 8
     end.
   
-Definition Molecule := list Ion.
-
-  
-  Inductive Bond : Type :=
-    | Single.
-  
-  (* Function to calculate the number of bonds needed for each ion *)
-  Definition bonds_needed (elem : Element) : nat :=
-    match elem with
-    | H => 1
-    | _ => 2 (* Assuming all other elements need 2 bonds to fill outer shell *)
-    end.
+Inductive Bond : Type :=
+   | Single.
 
 Definition getElement (ion : Ion) : Element :=
     match ion with
     | VI e _ _ => e
     end.
-
-Definition getCharge (ion : Ion) : Charge :=
-  match ion with
-  | VI _ c _ => c
-  end.
 
 Definition getValence (ion : Ion) : nat :=
     match ion with
@@ -64,92 +49,40 @@ Definition fully_bonded (ion : Ion) (bond : nat) : bool :=
     | VI _ _ v => if (v + bond) =? (OuterShell ion) then true else false
     end.
 
-Definition resetIon (ion : Ion) (bond : nat) : Ion :=
-    match ion with
-    | VI e c v => match bond with
-        | _ => VI e c (v + bond)
-        end
-    end.
+Inductive BondOption : Type :=
+    | Some (n m : nat)
+    | None.
 
-    (* THE PLAN: Recursive Backtracking
-    1. Check the following orientations in order:
-    
-        1 - 2 - 3
-        1 - 2 = 3
-        1 - 2 -= 3
-        1 = 2 - 3
-        1 = 2 = 3
-        1 -= 2 - 3
-
-    Make sure to write that the most electronegative element is to be place in the middle
-
-    *)
-  
   (* Function to find the correct orientation and bonds for the molecule *)
 
-
-
-Fixpoint orient_molecule (m1 m2 m3 : Ion) (b1 b2 : nat) : bool :=
-    match fully_bonded m1 b1 with
-    | true => match fully_bonded m2 (b1+b2) with
-        | true => fully_bonded m3 b2 (*CASE TRUE*)
-        | false =>  if (b2 =? 3) then false else orient_molecule (resetIon m1 b1)
-        (resetIon (resetIon m2 b2) b1)(resetIon m3 b2) (b1)(b2+1)
+Definition orient_molecule (m1 m2 m3 : Ion) : BondOption :=
+    match getValence m1 with
+    | 5 => match getValence m2 with 
+        | 4 => if ((getValence m3) =? 7) then Some 3 1 else None
+        | _ => None
         end
-    | false => match fully_bonded m2 (b1+b2) with
-        | true => match fully_bonded m3 b2 with
-            | true => false
-            | false => match b1 with
-                | 1 => match b2 with
-                    | 1 => orient_molecule (resetIon m1 b1) (resetIon (resetIon m2 b2) b1)
-                        (resetIon m3 b2) (b1)(b2+1)
-                    | 2 => orient_molecule (resetIon m1 b1) (resetIon (resetIon m2 b2) b1)
-                        (resetIon m3 b2) (b1)(b2+1)
-                    | 3 => orient_molecule (resetIon m1 b1)(resetIon (resetIon m2 b2) b1)
-                        (resetIon m3 b2) (b1+1)(b2-2)
-                    | _ => false
-                    end
-                | 2 => match b2 with
-                    | 1 => orient_molecule (resetIon m1 b1) (resetIon (resetIon m2 b2) b1)
-                    (resetIon m3 b2) (b1)(b2+1)
-                    | 2 => orient_molecule (resetIon m1 b1)(resetIon (resetIon m2 b2) b1)
-                        (resetIon m3 b2) (b1+1)(b2-1)
-                    | _ => false
-                    end
-                | 3 => false
-                | _ => false
-                end
-            end
-        | false => match b1 with
-            | 1 => match b2 with
-                | 1 => orient_molecule (resetIon m1 b1) (resetIon (resetIon m2 b2) b1)
-                    (resetIon m3 b2) (b1)(b2+1)
-                | 2 => orient_molecule (resetIon m1 b1) (resetIon (resetIon m2 b2) b1)
-                    (resetIon m3 b2) (b1)(b2+1)
-                | 3 => orient_molecule (resetIon m1 b1)(resetIon (resetIon m2 b2) b1)
-                    (resetIon m3 b2) (b1+1)(b2-2)
-                | _ => false
-                end
-            | 2 => match b2 with
-                | 1 => orient_molecule (resetIon m1 b1) (resetIon (resetIon m2 b2) b1)
-                (resetIon m3 b2) (b1)(b2+1)
-                | 2 => orient_molecule (resetIon m1 b1)(resetIon (resetIon m2 b2) b1)
-                (resetIon m3 b2) (b1+1)(b2-1)
-                | _ => false
-                end
-            | 3 => false
-            | _ => false
-            end
+    | 6 => match getValence m2 with 
+        | 4 => if ((getValence m3) =? 6) then Some 2 2 else None
+        | 5 => if ((getValence m3) =? 7) then Some 2 1 else None
+        | _ => None
         end
+    | 7 => match getValence m2 with
+        | 4 => if ((getValence m3) =? 5) then Some 1 2 else None
+        | 5 => if ((getValence m3) =? 6) then Some 1 2 else None
+        | 6 => if ((getValence m3) =? 7) then Some 1 1 else None
+        | _ => None
+        end
+    | _ => None
     end.
   
+ 
 
-Theorem Valence_Filled : forall (x y z: Ion)(n m:nat), (*Can we even say that? Can we say any nat?*)
-    orient_molecule (x y z)(n m) -> 
-        andb((fully_bonded z m))andb((fully_bonded x n)(fully_bonded y (n+m))).
+Theorem Valence_Filled : forall (x y z: Ion) (n m : nat), 
+    (orient_molecule x y z = Some n m) -> 
+        fully_bonded x n && fully_bonded y (n+m) && fully_bonded z m.
 
         (*AKA:
-            If our recursive function returns TRUE, then applying values n and m for bond
+            If our function returns Some n m, then applying values n and m for bond
             representation to the function "fully_bonded" will also return true for
             all three ions
         *)
