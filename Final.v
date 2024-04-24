@@ -80,7 +80,8 @@ Definition orient_molecule (m1 m2 m3 : Ion) : BondOption :=
 Theorem Valence_Filled : forall (x y z: Ion) (n m : nat), 
     (orient_molecule x y z = Some n m) -> 
         fully_bonded x n && fully_bonded y (n+m) && fully_bonded z m.
-
+            (*Throws an error for some reason about the line "fully_bonded x n && fully_bonded y (n+m) && fully_bonded z m", something
+                about needing to be a set, not a bool*)
         (*AKA:
             If our function returns Some n m, then applying values n and m for bond
             representation to the function "fully_bonded" will also return true for
