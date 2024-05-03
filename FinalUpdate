@@ -15,18 +15,17 @@ Inductive Element : Type :=
     | H | He | Li | Be | B | C | N | O | F | Ne | Na | Mg | Al | Si | P | S | Cl | Ar | K | Ca
     | Ga | Ge | As | Se | Br | Kr | Rb | Sr | In | Sn | Sb | Te | I | Xe | Cs | Ba | Tl | Pb
     | Bi | Po | At | Rn.
-  
-Inductive Charge : Type :=
-    | Positive | Negative | Neutral.
+
 
 Inductive Ion : Type :=
-    | VI (e : Element) (c : Charge) (n : nat).
+    | VI (e : Element) (n : nat).
+(* N represents the charge *)
   
 Definition OuterShell (i : Ion) : nat :=
     match i with
-    | VI H _ _ => 2
-    | VI He _ _ => 2
-    | VI _ _ _ => 8
+    | VI H _ => 2
+    | VI He _ => 2
+    | VI _ _ => 8
     end.
   
 Inductive Bond : Type :=
@@ -34,20 +33,19 @@ Inductive Bond : Type :=
 
 Definition getElement (ion : Ion) : Element :=
     match ion with
-    | VI e _ _ => e
+    | VI e _ => e
     end.
 
 Definition getValence (ion : Ion) : nat :=
     match ion with
-    | VI _ _ v => v
+    | VI _ v => v
     end.
 
   
   (* Helper function to check if an ion is fully bonded *)
-Definition fully_bonded (ion : Ion) (bond : nat) : bool :=
-    match ion with 
-    | VI _ _ v => if (v + bond) =? (OuterShell ion) then true else false
-    end.
+Inductive fully_bonded : Ion -> nat -> Prop :=
+    | ion' (e: Element) (v bond:nat)
+      : v + bond = (OuterShell (VI e v)) -> fully_bonded (VI e v) bond.
 
 Inductive BondOption : Type :=
     | Some (n m : nat)
@@ -75,41 +73,17 @@ Definition orient_molecule (m1 m2 m3 : Ion) : BondOption :=
     | _ => None
     end.
 
-
-
-(*Theorem Valence_Filled : forall (x y z: Ion) (n m : nat), 
-    (orient_molecule x y z = Some n m) -> 
-        fully_bonded x n && fully_bonded y (n+m) && fully_bonded z m.
-            (*Throws an error for some reason about the line "fully_bonded x n && fully_bonded y (n+m) && fully_bonded z m", something
-                about needing to be a set, not a bool*)
-        (*AKA:
-            If our function returns Some n m, then applying values n and m for bond
-            representation to the function "fully_bonded" will also return true for
-            all three ions
-        *)
-*)
-
-Theorem eqb_refl : forall n : nat, n =? n = true.
+Theorem orient_molecule_fully_bonded :
+  forall (m1 m2 m3 : Ion) (n m : nat),
+    orient_molecule m1 m2 m3 = Some n m ->
+    fully_bonded m1 n /\ fully_bonded m2 (n+m) /\ fully_bonded m3 m.
 Proof.
-  intros n.
-  unfold Nat.eqb. (* Unfold the definition of Nat.eqb *)
-  induction n as [| n' IHn'].
-  - (* Base case: n = 0 *)
-    reflexivity.
-  - (* Inductive case: n = S n' *)
-    simpl. (* Simplify the expression *)
-    apply IHn'. (* Use the inductive hypothesis *)
-Qed.
 
-Theorem Valence_Filled : forall (x y z: Ion) (n m : nat),
-  (orient_molecule x y z = Some n m) ->
-  fully_bonded x n = true /\ fully_bonded y (n+m) = true /\ fully_bonded z m = true.
-Proof.
-  intros x y z n m H.
-  unfold orient_molecule, fully_bonded in H.
-  destruct x as [ex cx nx], y as [ey cy ny], z as [ez cz nz].
-  simpl in H.
-  (* Case analysis on the values of nx, ny, nz, and the conditions in orient_molecule *)
+
+
+
+
+
 
 
 
