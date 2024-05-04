@@ -1,0 +1,160 @@
+From Coq Require Import Bool.Bool.
+From Coq Require Import Init.Nat.
+From Coq Require Import Arith.Arith.
+From Coq Require Import Arith.EqNat. Import Nat.
+From Coq Require Import Lia.
+From Coq Require Import Lists.List. 
+Import ListNotations.
+From Coq Require Import Strings.String.
+From LF Require Import Maps.
+From Coq Require Import List.
+Require Import Ascii String.
+Require Import Program.
+
+Inductive Element : Type :=
+    | H | He | Li | Be | B | C | N | O | F | Ne | Na | Mg | Al | Si | P | Cl | Ar | K | Ca
+    | Ga | Ge | As | Se | Br | Kr | Rb | Sr | In | Sn | Sb | Te | I | Xe | Cs | Ba | Tl | Pb
+    | Bi | Po | At | Rn.
+  
+
+Inductive B18 : Type :=
+    | One
+    | Two
+    | Three
+    | Four
+    | Five
+    | Six
+    | Seven
+    | Eight
+    | Null
+    .
+
+
+Definition IncElm (n : B18) : B18 :=
+    match n with
+    | One => Two
+    | Two => Three
+    | Three => Four
+    | Four => Five
+    | Five => Six
+    | Six => Seven
+    | Seven => Eight
+    | Eight => Null
+    | Null => Null
+    end.
+
+Definition Add_LM (n: nat) (b : B18) : B18 :=
+    match n with 
+    | 1 => IncElm (b)
+    | 2 => IncElm (IncElm b)
+    | 3 => IncElm (IncElm (IncElm b))
+    | 4 => IncElm (IncElm (IncElm (IncElm b)))
+    | _ => b
+    end.
+
+Definition Add_MR (n: nat) (b : B18) : B18 :=
+    match n with 
+    | 1 => IncElm (b)
+    | 2 => IncElm (IncElm b)
+    | 3 => IncElm (IncElm (IncElm b))
+    | 4 => IncElm (IncElm (IncElm (IncElm b)))
+    | _ => b
+    end.
+
+
+Inductive Ion : Type :=
+    | VI (e : Element) (n : B18).
+  
+
+
+Definition OuterShell (i : Ion) : B18 :=
+    match i with
+    | VI H _ => Two
+    | VI He _ => Two
+    | VI _ _ => Eight
+    end.
+
+Definition Sodium := VI Na Five.
+Definition Sodium2 := VI Na (Add_LM 1 Five).
+
+Definition getElement (ion : Ion) : Element :=
+    match ion with
+    | VI e _ => e
+    end.
+
+Definition getValence (ion : Ion) : B18 :=
+    match ion with
+    | VI _ v => v
+    end.
+
+Inductive fully_bonded : Ion -> nat -> Prop :=
+    | ion' (e: Element) (v : B18) (n: nat)
+      : Add_LM n v = OuterShell (VI e v) -> fully_bonded (VI e v) n.
+
+
+
+Inductive BondOption : Type :=
+    | Some (n m : nat)
+    | None.
+
+
+
+Definition orient_molecule (m1 m2 m3 : Ion) : BondOption :=
+    match getValence m1 with
+    | Five => match getValence m2 with 
+        | Four => match getValence m3 with 
+            | Seven => Some 3 1
+            | _ => None
+            end
+        | _ => None
+        end
+    | Six => match getValence m2 with 
+        | Four => match getValence m3 with
+            | Six => Some 2 2
+            | _ => None
+            end
+        | Five => match getValence m3 with
+            | Seven => Some 2 1
+            | _ => None
+            end
+        | _ => None
+        end
+    | Seven => match getValence m2 with
+        | Four => match getValence m3 with 
+            | Five => Some 1 3
+            | _ => None
+            end
+        | Five => match getValence m3 with 
+            | Six => Some 1 2
+            | _ => None
+            end
+        | Six => match getValence m3 with 
+            | Seven => Some 1 1
+            | _ => None
+            end
+        | _ => None
+        end
+    | _ => None
+    end.
+
+
+
+Theorem Valence_Filled : forall (x y z: Ion) (n m : nat),
+    (orient_molecule x y z = Some n m) ->
+    fully_bonded x n /\ fully_bonded y (n+m) /\ fully_bonded z m.
+Proof. intros x y z n m H.
+unfold orient_molecule in H.
+destruct (getValence x) eqn:Vx; destruct (getValence y) eqn:Vy; destruct (getValence z) eqn:Vz;
+try discriminate H;
+try (destruct n; discriminate H);
+try (destruct n; destruct n; discriminate H);
+try (destruct n; destruct n; destruct n; discriminate H).
+all: inversion H; subst; clear H.
+-
+
+
+
+
+
+
+
