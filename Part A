@@ -1,0 +1,121 @@
+From Coq Require Import Bool.Bool.
+From Coq Require Import Init.Nat.
+From Coq Require Import Arith.Arith.
+From Coq Require Import Arith.EqNat. Import Nat.
+From Coq Require Import Lia.
+From Coq Require Import Lists.List. 
+Import ListNotations.
+From Coq Require Import Strings.String.
+From LF Require Import Maps.
+From Coq Require Import List.
+Require Import Ascii String.
+Require Import Program.
+Require Import String.
+
+Definition string_dec : forall s1 s2 : string, {s1 = s2} + {s1 <> s2}.
+
+Local Open Scope lazy_bool_scope.
+
+Fixpoint eqb s1 s2 : bool :=
+ match s1, s2 with
+ | EmptyString, EmptyString => true
+ | String c1 s1', String c2 s2' => Ascii.eqb c1 c2 &&& eqb s1' s2'
+ | _,_ => false
+ end.
+
+Inductive Element : Type :=
+    | H | He | Li | Be | B | C | N | O | F | Ne | Na | Mg | Al | Si | P | Cl | Ar | K | Ca
+    | Ga | Ge | As | Se | Br | Kr | Rb | Sr | In | Sn | Sb | Te | I | Xe | Cs | Ba | Tl | Pb
+    | Bi | Po | At | Rn.
+  
+
+Inductive B18 : Type :=
+    | One
+    | Two
+    | Three
+    | Four
+    | Five
+    | Six
+    | Seven
+    | Eight
+    .
+
+
+Definition IncElm (n : B18) : B18 :=
+    match n with
+    | One => Two
+    | Two => Three
+    | Three => Four
+    | Four => Five
+    | Five => Six
+    | Six => Seven
+    | Seven => Eight
+    | Eight => Eight
+    end.
+
+Definition Add_LM (n: nat) (b : B18) : B18 :=
+    match n with 
+    | 1 => IncElm (b)
+    | 2 => IncElm (IncElm b)
+    | 3 => IncElm (IncElm (IncElm b))
+    | 4 => IncElm (IncElm (IncElm (IncElm b)))
+    | _ => b
+    end.
+
+Definition Add_MR (n: nat) (b : B18) : B18 :=
+    match n with 
+    | 1 => IncElm (b)
+    | 2 => IncElm (IncElm b)
+    | 3 => IncElm (IncElm (IncElm b))
+    | 4 => IncElm (IncElm (IncElm (IncElm b)))
+    | _ => b
+    end.
+
+
+Inductive Ion : Type :=
+    | VI (e : Element) (n : B18).
+  
+Definition OuterShell (i : Ion) : B18 :=
+    match i with
+    | VI H _ => Two
+    | VI He _ => Two
+    | VI _ _ => Eight
+    end.
+
+
+Definition getElement (ion : Ion) : Element :=
+    match ion with
+    | VI e _ => e
+    end.
+
+Definition getValence (ion : Ion) : B18 :=
+    match ion with
+    | VI _ v => v
+    end.
+
+
+
+  (* Helper function to check if an ion is fully bonded *)
+Definition fully_bonded (ion : Ion) : bool :=
+    match ion with 
+    | VI _ v => match v with 
+        | One => false
+        | Two => match OuterShell ion with
+            | Two => true
+            | _ => false
+            end
+        | Three => false
+        | Four => false
+        | Five => false
+        | Six => false
+        | Seven => false
+        | Eight => match OuterShell ion with
+            | Eight => true
+            | _ => false
+            end
+        end
+    end.
+
+Inductive BondOption : Type :=
+    | Some (n m : nat)
+    | None.
