@@ -1,0 +1,39 @@
+Theorem Valence_Filled : forall (x y z: Ion) (n m : nat),
+    (orient_molecule x y z = Some n m) ->
+    fully_bonded x n /\ fully_bonded y (n+m) /\ fully_bonded z m.
+Proof. intros x y z n m H.
+unfold orient_molecule in H.
+destruct (getValence x) eqn:Vx; destruct (getValence y) eqn:Vy; destruct (getValence z) eqn:Vz;
+try discriminate H;
+try (destruct n; discriminate H);
+try (destruct n; destruct n; discriminate H);
+try (destruct n; destruct n; destruct n; discriminate H).
+all: inversion H; subst; clear H.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+- destruct (n =? 5) eqn:Eqx5. destruct (n0 =? 4) eqn:Eqy4; destruct (n1 =? 7) eqn:Eqz7;
+  try (apply Nat.eqb_eq in Eqx5; apply Nat.eqb_eq in Eqy4; apply Nat.eqb_eq in Eqz7; subst; split; constructor; reflexivity);
+  inversion H1.
+
+- destruct (n =? 6) eqn:Eqx6; destruct (n0 =? 4) eqn:Eqy4; destruct (n1 =? 6) eqn:Eqz6;
+  destruct (n0 =? 5) eqn:Eqy5; destruct (n1 =? 7) eqn:Eqz7;
+  try (apply Nat.eqb_eq in Eqx6; apply Nat.eqb_eq in Eqy4; apply Nat.eqb_eq in Eqz6; apply Nat.eqb_eq in Eqy5; apply Nat.eqb_eq in Eqz7; subst; split; constructor; reflexivity);
+  try (inversion H1);
+  destruct (n0 =? 5) eqn:Eqy5; destruct (n1 =? 6) eqn:Eqz6;
+  try (apply Nat.eqb_eq in Eqx6; apply Nat.eqb_eq in Eqy4; apply Nat.eqb_eq in Eqy5; apply Nat.eqb_eq in Eqz6; subst; split; constructor; reflexivity);
+  inversion H1.
+
+- destruct (n =? 7) eqn:Eqx7; destruct (n0 =? 4) eqn:Eqy4; destruct (n1 =? 5) eqn:Eqz5;
+  destruct (n0 =? 5) eqn:Eqy5; destruct (n1 =? 6) eqn:Eqz6; destruct (n0 =? 6) eqn:Eqy6;
+  destruct (n1 =? 7) eqn:Eqz7;
+  try (apply Nat.eqb_eq in Eqx7; apply Nat.eqb_eq in Eqy4; apply Nat.eqb_eq in Eqz5; apply Nat.eqb_eq in Eqy5; apply Nat.eqb_eq in Eqz6; apply Nat.eqb_eq in Eqy6; apply Nat.eqb_eq in Eqz7; subst; split; constructor; reflexivity);
+  inversion H1;
+  destruct (n0 =? 5) eqn:Eqy5; destruct (n1 =? 6) eqn:Eqz6; destruct (n0 =? 6) eqn:Eqy6;
+  destruct (n1 =? 7) eqn:Eqz7;
+  try (apply Nat.eqb_eq in Eqx7; apply Nat.eqb_eq in Eqy4; apply Nat.eqb_eq in Eqy5; apply Nat.eqb_eq in Eqz6; apply Nat.eqb_eq in Eqy6; apply Nat.eqb_eq in Eqz7; subst; split; constructor; reflexivity);
+  inversion H1;
+  destruct (n0 =? 6) eqn:Eqy6; destruct (n1 =? 7) eqn:Eqz7;
+  try (apply Nat.eqb_eq in Eqx7; apply Nat.eqb_eq in Eqy4; apply Nat.eqb_eq in Eqy6; apply Nat.eqb_eq in Eqz7; subst; split; constructor; reflexivity);
+  inversion H1.
+Qed.
