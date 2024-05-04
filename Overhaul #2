@@ -1,0 +1,144 @@
+From Coq Require Import Bool.Bool.
+From Coq Require Import Init.Nat.
+From Coq Require Import Arith.Arith.
+From Coq Require Import Arith.EqNat. Import Nat.
+From Coq Require Import Lia.
+From Coq Require Import Lists.List. 
+Import ListNotations.
+From Coq Require Import Strings.String.
+From LF Require Import Maps.
+From Coq Require Import List.
+Require Import Ascii String.
+Require Import Program.
+Require Import String.
+Require Import Coq.Classes.RelationClasses.
+
+
+Inductive Element : Type :=
+    | H | He | Li | Be | B | C | N | O | F | Ne | Na | Mg | Al | Si | P | Cl | Ar | K | Ca
+    | Ga | Ge | As | Se | Br | Kr | Rb | Sr | In | Sn | Sb | Te | I | Xe | Cs | Ba | Tl | Pb
+    | Bi | Po | At | Rn.
+
+
+Inductive B18 : Type :=
+    | One
+    | Two
+    | Three
+    | Four
+    | Five
+    | Six
+    | Seven
+    | Eight
+    | Null
+    .
+
+Definition system : Type := (B18 * B18 * B18).
+
+Definition increment (x: B18) : B18 :=
+  match x with
+  | One => Two
+  | Two => Three
+  | Three => Four
+  | Four => Five
+  | Five => Six
+  | Six => Seven
+  | Seven => Eight
+  | Eight => Null
+  | Null => Null
+  end.
+
+(* Boolean equality function for B18 *)
+Definition eqb_B18 (x y: B18) : bool :=
+  match (x, y) with
+  | (One, One) => true
+  | (Two, Two) => true
+  | (Three, Three) => true
+  | (Four, Four) => true
+  | (Five, Five) => true
+  | (Six, Six) => true
+  | (Seven, Seven) => true
+  | (Eight, Eight) => true
+  | (Null, Null) => true
+  | _ => false
+  end.
+
+Definition left_middle_add (sys: system) : system :=
+  match sys with
+  | (Null, _, _) => (Null, Null, Null)
+  | (_, Null, _) => (Null, Null, Null)
+  | (_, _, Null) => (Null, Null, Null)
+  | (l, m, r) => (increment l, increment m, r)
+  end.
+
+Definition right_middle_add (sys: system) : system :=
+  match sys with
+  | (Null, _, _) => (Null, Null, Null)
+  | (_, Null, _) => (Null, Null, Null)
+  | (_, _, Null) => (Null, Null, Null)
+  | (l, m, r) => (l, increment m, increment r)
+  end.
+
+Definition is_complete_state_system (sys: system) : bool :=
+  match sys with
+  | (l, m, r) =>
+    eqb_B18 l Eight && eqb_B18 m Eight && eqb_B18 r Eight
+  end.
+
+
+Definition example_system : system := (One, Two, Three).
+Definition modified_system : system := left_middle_add(example_system).
+Definition modified_system': system := right_middle_add(example_system).
+
+Compute modified_system.
+Compute modified_system'.
+Compute is_complete_state_system (One, Two, Three).
+Compute is_complete_state_system (Eight, Eight, Eight).
+
+Definition CheckNull (sys: system) : bool :=
+    match sys with
+    |(Null, Null, Null) => false
+    | (_,_,_) => true
+    end.
+
+
+(* Recursive function to increment left until it is Eight *)
+Fixpoint make_left_eight (sys: system) (max_steps: nat) : system :=
+  match max_steps with
+  | 0 => sys  (* Avoid infinite recursion *)
+  | S n =>
+    let '(l, m, r) := sys in
+    if eqb_B18 l Eight then
+      sys
+    else if eqb_B18 l Null then
+      (Null, Null, Null)
+    else
+      make_left_eight (increment l, increment m, r) n
+  end.
+
+(* Recursive function to increment right until it is Eight *)
+Fixpoint make_right_eight (sys: system) (max_steps: nat): system :=
+    match max_steps with
+    | 0 => sys  (* Avoid infinite recursion *)
+    | S n =>
+      let '(l, m, r) := sys in
+      if eqb_B18 r Eight then
+        sys
+      else if eqb_B18 r Null then
+        (Null, Null, Null)
+      else
+        make_right_eight (l, increment m, increment r) n
+    end.
+
+(* Function to check if the middle is Eight *)
+Definition is_eight_eight_eight_possible (sys: system) (max_steps: nat) : bool :=
+  let sys_left_eight := make_left_eight sys max_steps in
+  let sys_right_eight := make_right_eight sys_left_eight max_steps in
+  match sys_right_eight with
+  | (l, m, _) => eqb_B18 m Eight
+  end.
+
+(* Example system *)
+Definition example_system2 : system := (Seven, Four, Six).
+
+(* Check if it's possible to get to "eight-eight-eight" *)
+Compute is_eight_eight_eight_possible (example_system2) (100).
