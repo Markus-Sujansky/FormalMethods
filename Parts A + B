@@ -67,6 +67,8 @@ Definition Add_MR (n: nat) (b : B18) : B18 :=
 Inductive Ion : Type :=
     | VI (e : Element) (n : B18).
   
+
+
 Definition OuterShell (i : Ion) : B18 :=
     match i with
     | VI H _ => Two
@@ -74,6 +76,8 @@ Definition OuterShell (i : Ion) : B18 :=
     | VI _ _ => Eight
     end.
 
+Definition Sodium := VI Na Five.
+Definition Sodium2 := VI Na (Add_LM 1 Five).
 
 Definition getElement (ion : Ion) : Element :=
     match ion with
@@ -85,37 +89,17 @@ Definition getValence (ion : Ion) : B18 :=
     | VI _ v => v
     end.
 
-
-
 Inductive fully_bonded : Ion -> nat -> Prop :=
     | ion' (e: Element) (v : B18) (n: nat)
       : Add_LM n v = OuterShell (VI e v) -> fully_bonded (VI e v) n.
+
+
 
 Inductive BondOption : Type :=
     | Some (n m : nat)
     | None.
 
-(* Fixpoint while_loop (condition : nat -> bool) (body : nat -> nat) (start : nat) : nat :=
-  match condition start with
-  | true => while_loop condition body (body start)
-  | false => start
-  end.
 
-Definition is_less_than_5 (n : nat) : bool :=
-  if n <? 5 then true else false.
-  (* Function to find the correct orientation and bonds for the molecule *) *)
-
-(*   Fixpoint count_bonds (ions : list Ion) : BondOption :=
-    match ions with
-    | [] => Some 0 0 (* Base case: empty list, no bonds *)
-    | [ _ ] => Some 0 0 (* Base case: single ion, no bonds *)
-    | [ _ ; _ ] => Some 1 1 (* Base case: two ions, one bond each *)
-    | _ :: rest =>
-      match count_bonds rest with
-      | Some lmCount rmCount => Some (S lmCount) (S rmCount) (* Increment counts *)
-      | None => None (* If any ion is not fully bonded, return None *)
-      end
-    end. *)
 
 Definition orient_molecule (m1 m2 m3 : Ion) : BondOption :=
     match getValence m1 with
@@ -154,3 +138,9 @@ Definition orient_molecule (m1 m2 m3 : Ion) : BondOption :=
         end
     | _ => None
     end.
+
+
+
+Theorem Valence_Filled : forall (x y z: Ion) (n m : nat),
+    (orient_molecule x y z = Some n m) ->
+    fully_bonded x n /\ fully_bonded y (n+m) /\ fully_bonded z m.
