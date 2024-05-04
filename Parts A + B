@@ -1,0 +1,168 @@
+From Coq Require Import Bool.Bool.
+From Coq Require Import Init.Nat.
+From Coq Require Import Arith.Arith.
+From Coq Require Import Arith.EqNat. Import Nat.
+From Coq Require Import Lia.
+From Coq Require Import Lists.List. 
+Import ListNotations.
+From Coq Require Import Strings.String.
+From LF Require Import Maps.
+From Coq Require Import List.
+Require Import Ascii String.
+Require Import Program.
+Require Import String.
+
+
+Inductive Element : Type :=
+    | H | He | Li | Be | B | C | N | O | F | Ne | Na | Mg | Al | Si | P | Cl | Ar | K | Ca
+    | Ga | Ge | As | Se | Br | Kr | Rb | Sr | In | Sn | Sb | Te | I | Xe | Cs | Ba | Tl | Pb
+    | Bi | Po | At | Rn.
+  
+
+Inductive B18 : Type :=
+    | One
+    | Two
+    | Three
+    | Four
+    | Five
+    | Six
+    | Seven
+    | Eight
+    | Null
+    .
+
+
+Definition IncElm (n : B18) : B18 :=
+    match n with
+    | One => Two
+    | Two => Three
+    | Three => Four
+    | Four => Five
+    | Five => Six
+    | Six => Seven
+    | Seven => Eight
+    | Eight => Null
+    | Null => Null
+    end.
+
+Definition Add_LM (n: nat) (b : B18) : B18 :=
+    match n with 
+    | 1 => IncElm (b)
+    | 2 => IncElm (IncElm b)
+    | 3 => IncElm (IncElm (IncElm b))
+    | 4 => IncElm (IncElm (IncElm (IncElm b)))
+    | _ => b
+    end.
+
+Definition Add_MR (n: nat) (b : B18) : B18 :=
+    match n with 
+    | 1 => IncElm (b)
+    | 2 => IncElm (IncElm b)
+    | 3 => IncElm (IncElm (IncElm b))
+    | 4 => IncElm (IncElm (IncElm (IncElm b)))
+    | _ => b
+    end.
+
+
+Inductive Ion : Type :=
+    | VI (e : Element) (n : B18).
+  
+Definition OuterShell (i : Ion) : B18 :=
+    match i with
+    | VI H _ => Two
+    | VI He _ => Two
+    | VI _ _ => Eight
+    end.
+
+
+Definition getElement (ion : Ion) : Element :=
+    match ion with
+    | VI e _ => e
+    end.
+
+Definition getValence (ion : Ion) : B18 :=
+    match ion with
+    | VI _ v => v
+    end.
+
+
+
+  (* Helper function to check if an ion is fully bonded *)
+  Definition fully_bonded (ion : Ion) (n: nat) : bool :=
+    match ion with 
+    | VI _ v => match Add_LM n v with 
+        | Two => match OuterShell ion with
+            | Two => true
+            | _ => false
+            end
+        | Eight => match OuterShell ion with
+            | Eight => true
+            | _ => false
+            end
+        | _ => false
+        end
+    end.
+
+Inductive BondOption : Type :=
+    | Some (n m : nat)
+    | None.
+
+(* Fixpoint while_loop (condition : nat -> bool) (body : nat -> nat) (start : nat) : nat :=
+  match condition start with
+  | true => while_loop condition body (body start)
+  | false => start
+  end.
+
+Definition is_less_than_5 (n : nat) : bool :=
+  if n <? 5 then true else false.
+  (* Function to find the correct orientation and bonds for the molecule *) *)
+
+(*   Fixpoint count_bonds (ions : list Ion) : BondOption :=
+    match ions with
+    | [] => Some 0 0 (* Base case: empty list, no bonds *)
+    | [ _ ] => Some 0 0 (* Base case: single ion, no bonds *)
+    | [ _ ; _ ] => Some 1 1 (* Base case: two ions, one bond each *)
+    | _ :: rest =>
+      match count_bonds rest with
+      | Some lmCount rmCount => Some (S lmCount) (S rmCount) (* Increment counts *)
+      | None => None (* If any ion is not fully bonded, return None *)
+      end
+    end. *)
+
+Definition orient_molecule (m1 m2 m3 : Ion) : BondOption :=
+    match getValence m1 with
+    | Five => match getValence m2 with 
+        | Four => match getValence m3 with 
+            | Seven => Some 3 1
+            | _ => None
+            end
+        | _ => None
+        end
+    | Six => match getValence m2 with 
+        | Four => match getValence m3 with
+            | Six => Some 2 2
+            | _ => None
+            end
+        | Five => match getValence m3 with
+            | Seven => Some 2 1
+            | _ => None
+            end
+        | _ => None
+        end
+    | Seven => match getValence m2 with
+        | Four => match getValence m3 with 
+            | Five => Some 1 3
+            | _ => None
+            end
+        | Five => match getValence m3 with 
+            | Six => Some 1 2
+            | _ => None
+            end
+        | Six => match getValence m3 with 
+            | Seven => Some 1 1
+            | _ => None
+            end
+        | _ => None
+        end
+    | _ => None
+    end.
