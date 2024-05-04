@@ -87,21 +87,9 @@ Definition getValence (ion : Ion) : B18 :=
 
 
 
-  (* Helper function to check if an ion is fully bonded *)
-  Definition fully_bonded (ion : Ion) (n: nat) : bool :=
-    match ion with 
-    | VI _ v => match Add_LM n v with 
-        | Two => match OuterShell ion with
-            | Two => true
-            | _ => false
-            end
-        | Eight => match OuterShell ion with
-            | Eight => true
-            | _ => false
-            end
-        | _ => false
-        end
-    end.
+Inductive fully_bonded : Ion -> nat -> Prop :=
+    | ion' (e: Element) (v : B18) (n: nat)
+      : Add_LM n v = OuterShell (VI e v) -> fully_bonded (VI e v) n.
 
 Inductive BondOption : Type :=
     | Some (n m : nat)
