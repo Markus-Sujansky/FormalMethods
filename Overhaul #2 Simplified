@@ -15,7 +15,7 @@ A complete state is described as when the valence (outer) shell of an ion is com
 Oftentimes, this occurs when 8 elections occupy the outer shell.
 
 In order to do this, ions form bonds between each other. Each bond adds an electron to the valence shell of the two electrons
-beind bonded.
+being bonded.
 *)
 
 (** 
