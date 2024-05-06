@@ -5,7 +5,7 @@ From Coq Require Import Arith.Arith.
 From Coq Require Import Arith.EqNat. 
 From LF Require Import Maps.
 
-(**#<h1>Markus and Jacob Formal Methods Final Project</h1># *)
+(**#<h1>Markus and Jacob Formal Methods Final Project: Proving Tri-atomic Molecular Configurations</h1># *)
 
 (** This type represents all of the possible elements incolves in the molecular configuration of this project. For ease of 
     process, we have included only Elements in the P and S blocks of the Periodic table. *)
