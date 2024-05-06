@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>FinalProject</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library FinalProject</h1>
+
+<div class="code">
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Bool.Bool</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Init.Nat</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Arith.Arith</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Arith.EqNat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">Nat</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Lia</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Lists.List</span>.<br/>
+<span class="id" title="keyword">Import</span> <span class="id" title="var">ListNotations</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Strings.String</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">Coq</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">List</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Ascii</span> <span class="id" title="var">String</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Program</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Coq.Classes.RelationClasses</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">Coq.Arith.PeanoNat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<h1>Markus and Jacob Formal Methods Final Project</h1> 
+<div class="paragraph"> </div>
+
+ An introduction to our project:
+
+<div class="paragraph"> </div>
+
+Our initial goal was to a model a the three-ion molecule system found in nature.
+This describes how groups of three molecules natural settle in a complete state.
+A complete state is described as when the valence (outer) shell of an ion is completely filled with elections.
+Oftentimes, this occurs when 8 elections occupy the outer shell.
+
+<div class="paragraph"> </div>
+
+In order to do this, ions form bonds between each other. Each bond adds an electron to the valence shell of the two electrons
+beind bonded.
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+In the first part of our project, we first focused on writing up what the combinations of ions would look like.
+
+<div class="paragraph"> </div>
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PDF Viewer</title>
+</head>
+<body>
+    <!-- Embedding a PDF using <embed> -->
+    <embed src="Picture1.pdf" type="application/pdf" width="100%" height="500px" />
+</body>
+</html> 
+
+<div class="paragraph"> </div>
+
+We determined at any complete state of 3 ions must have valence electron combinations that match one of the 6 above described combinations.
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+ In the next part of our project we translated our write-up into a more formalized pseudocode 
+which we could then completely formalize in coq 
+
+<div class="paragraph"> </div>
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PDF Viewer</title>
+</head>
+<body>
+    <!-- Embedding a PDF using <embed> -->
+    <embed src="Picture2.pdf" type="application/pdf" width="100%" height="500px" />
+</body>
+</html> 
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<a id="lab1"></a><h2 class="section">Elements</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Inductive</span> <span class="id" title="var">Element</span> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">H</span> | <span class="id" title="var">He</span> | <span class="id" title="var">Li</span> | <span class="id" title="var">Be</span> | <span class="id" title="var">B</span> | <span class="id" title="var">C</span> | <span class="id" title="var">N</span> | <span class="id" title="var">O</span> | <span class="id" title="var">F</span> | <span class="id" title="var">Ne</span> | <span class="id" title="var">Na</span> | <span class="id" title="var">Mg</span> | <span class="id" title="var">Al</span> | <span class="id" title="var">Si</span> | <span class="id" title="var">P</span> | <span class="id" title="var">Cl</span> | <span class="id" title="var">Ar</span> | <span class="id" title="var">K</span> | <span class="id" title="var">Ca</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Ga</span> | <span class="id" title="var">Ge</span> | <span class="id" title="var">As</span> | <span class="id" title="var">Se</span> | <span class="id" title="var">Br</span> | <span class="id" title="var">Kr</span> | <span class="id" title="var">Rb</span> | <span class="id" title="var">Sr</span> | <span class="id" title="var">In</span> | <span class="id" title="var">Sn</span> | <span class="id" title="var">Sb</span> | <span class="id" title="var">Te</span> | <span class="id" title="var">I</span> | <span class="id" title="var">Xe</span> | <span class="id" title="var">Cs</span> | <span class="id" title="var">Ba</span> | <span class="id" title="var">Tl</span> | <span class="id" title="var">Pb</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Bi</span> | <span class="id" title="var">Po</span> | <span class="id" title="var">At</span> | <span class="id" title="var">Rn</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab2"></a><h2 class="section">System Data Structure</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Inductive</span> <span class="id" title="var">system</span> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Sys</span> : <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">system</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab3"></a><h2 class="section">System Operations</h2>
+ Functions to manipulate and query a `system`. 
+<div class="paragraph"> </div>
+
+ Increment the left and middle parts of the system. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">left_middle_add</span> (<span class="id" title="var">sys</span>: <span class="id" title="var">system</span>) : <span class="id" title="var">system</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">sys</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">r</span> =&gt; <span class="id" title="var">Sys</span> (<span class="id" title="var">S</span> <span class="id" title="var">l</span>) (<span class="id" title="var">S</span> <span class="id" title="var">m</span>) <span class="id" title="var">r</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Increment the middle and right parts of the system. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">right_middle_add</span> (<span class="id" title="var">sys</span>: <span class="id" title="var">system</span>) : <span class="id" title="var">system</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">sys</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">r</span> =&gt; <span class="id" title="var">Sys</span> <span class="id" title="var">l</span> (<span class="id" title="var">S</span> <span class="id" title="var">m</span>) (<span class="id" title="var">S</span> <span class="id" title="var">r</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Check if all parts of a system are equal to 8. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_complete_state_system</span> (<span class="id" title="var">sys</span>: <span class="id" title="var">system</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">sys</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">r</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">l</span> =? 8) &amp;&amp; (<span class="id" title="var">m</span> =? 8) &amp;&amp; (<span class="id" title="var">r</span> =? 8)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab4"></a><h2 class="section">Example Systems</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">example_system</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 1 2 3.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The system after incrementing the left and middle parts. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">modified_system</span> : <span class="id" title="var">system</span> := <span class="id" title="var">left_middle_add</span>(<span class="id" title="var">example_system</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The system after incrementing the middle and right parts. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">modified_system'</span> : <span class="id" title="var">system</span> := <span class="id" title="var">right_middle_add</span>(<span class="id" title="var">example_system</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab5"></a><h2 class="section">System Adjustment Functions</h2>
+ Functions to adjust the left and right parts to reach a specific state. 
+<div class="paragraph"> </div>
+
+ Increment the left and middle parts to reach 8, with a limit on steps. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">make_left_eight</span> (<span class="id" title="var">sys</span>: <span class="id" title="var">system</span>) (<span class="id" title="var">max_steps</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">system</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">max_steps</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; <span class="id" title="var">sys</span>  <br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n</span> =&gt; <span class="id" title="keyword">match</span> <span class="id" title="var">sys</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">r</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <span class="id" title="var">l</span> =? 8 <span class="id" title="keyword">then</span> <span class="id" title="var">sys</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> <span class="id" title="var">make_left_eight</span> (<span class="id" title="var">Sys</span> (<span class="id" title="var">S</span> <span class="id" title="var">l</span>) (<span class="id" title="var">S</span> <span class="id" title="var">m</span>) <span class="id" title="var">r</span>) <span class="id" title="var">n</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Increment the middle and right parts to reach 8, with a limit on steps. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">make_right_eight</span> (<span class="id" title="var">sys</span>: <span class="id" title="var">system</span>) (<span class="id" title="var">max_steps</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">system</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">max_steps</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; <span class="id" title="var">sys</span>  <br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n</span> =&gt; <span class="id" title="keyword">match</span> <span class="id" title="var">sys</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">r</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <span class="id" title="var">r</span> =? 8 <span class="id" title="keyword">then</span> <span class="id" title="var">sys</span>  <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> <span class="id" title="var">make_right_eight</span> (<span class="id" title="var">Sys</span> <span class="id" title="var">l</span> (<span class="id" title="var">S</span> <span class="id" title="var">m</span>) (<span class="id" title="var">S</span> <span class="id" title="var">r</span>)) <span class="id" title="var">n</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab6"></a><h2 class="section">Eight-Eight-Eight Possibility Check</h2>
+ Check whether a system can reach a state where all parts are 8 within a certain number of steps. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_eight_eight_eight_possible</span> (<span class="id" title="var">sys</span>: <span class="id" title="var">system</span>) (<span class="id" title="var">max_steps</span>: <span class="id" title="var">nat</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">sys_left_eight</span> := <span class="id" title="var">make_left_eight</span> <span class="id" title="var">sys</span> <span class="id" title="var">max_steps</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">sys_right_eight</span> := <span class="id" title="var">make_right_eight</span> <span class="id" title="var">sys_left_eight</span> <span class="id" title="var">max_steps</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">sys_right_eight</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">_</span> =&gt; (<span class="id" title="var">m</span> =? 8)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab7"></a><h2 class="section">Example System for Testing</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">example_system2</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 5 4 7.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Check if it's possible to get to "eight-eight-eight" 
+</div>
+<div class="code">
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> (<span class="id" title="var">example_system2</span>) (100).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab8"></a><h2 class="section">Correct and Incorrect Systems</h2>
+ Definitions of correct and incorrect systems for testing the eight-eight-eight condition. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">correct_system1</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 5 4 7.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">correct_system2</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 6 4 6.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">correct_system3</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 6 5 7.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">correct_system4</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 7 4 5.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">correct_system5</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 7 5 6.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">correct_system6</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 7 6 7.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">incorrect_system1</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 7 4 7.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">incorrect_system2</span> : <span class="id" title="var">system</span> := <span class="id" title="var">Sys</span> 1 1 2.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab9"></a><h2 class="section">Tests for Correct Systems</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">correct_system1</span> 100.<br/>
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">correct_system2</span> 100.<br/>
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">correct_system3</span> 100.<br/>
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">correct_system4</span> 100.<br/>
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">correct_system5</span> 100.<br/>
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">correct_system6</span> 100.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab10"></a><h2 class="section">Tests for Incorrect Systems</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">incorrect_system1</span> 100.<br/>
+<span class="id" title="keyword">Compute</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">incorrect_system2</span> 100.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab11"></a><h2 class="section">Other Operations</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">system_eq</span> (<span class="id" title="var">sys1</span> <span class="id" title="var">sys2</span> : <span class="id" title="var">system</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">sys1</span>, <span class="id" title="var">sys2</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">l1</span> <span class="id" title="var">m1</span> <span class="id" title="var">r1</span>, <span class="id" title="var">Sys</span> <span class="id" title="var">l2</span> <span class="id" title="var">m2</span> <span class="id" title="var">r2</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">l1</span> =? <span class="id" title="var">l2</span>) &amp;&amp; (<span class="id" title="var">m1</span> =? <span class="id" title="var">m2</span>) &amp;&amp; (<span class="id" title="var">r1</span> =? <span class="id" title="var">r2</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">member</span> (<span class="id" title="var">v</span> : <span class="id" title="var">system</span>) (<span class="id" title="var">s</span> : <span class="id" title="var">list</span> <span class="id" title="var">system</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">s</span> <span class="id" title="keyword">with</span> <br/>
+&nbsp;&nbsp;| <span class="id" title="var">nil</span> =&gt; <span class="id" title="var">false</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">x</span> :: <span class="id" title="var">y</span> =&gt; <span class="id" title="keyword">if</span> <span class="id" title="var">system_eq</span> <span class="id" title="var">v</span> <span class="id" title="var">x</span> <span class="id" title="keyword">then</span> <span class="id" title="var">true</span> <span class="id" title="keyword">else</span> <span class="id" title="var">member</span> <span class="id" title="var">v</span> <span class="id" title="var">y</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">getMiddle</span> (<span class="id" title="var">sys</span> : <span class="id" title="var">system</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">sys</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Sys</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span> <span class="id" title="var">_</span> =&gt; <span class="id" title="var">y</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab12"></a><h2 class="section">Theorem: Eight-Eight-Eight Possibility Implies Correct Middle</h2>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">is_eight_eight_eight_possible_implies_correct</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">sys</span> : <span class="id" title="var">system</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="var">sys</span> 100 = <span class="id" title="var">true</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">getMiddle</span>(<span class="id" title="var">make_right_eight</span>(<span class="id" title="var">make_left_eight</span> <span class="id" title="var">sys</span> 100) 100) = 8.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">sys</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">is_eight_eight_eight_possible</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">sys</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">r</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">make_left_eight</span> (<span class="id" title="var">Sys</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">r</span>) 100) <span class="id" title="var">eqn</span>: <span class="id" title="var">H_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">make_right_eight</span> (<span class="id" title="var">Sys</span> <span class="id" title="var">n</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>) 100) <span class="id" title="var">eqn</span>: <span class="id" title="var">H_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">getMiddle</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">Nat.eqb_eq</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Concluding remarks / where we believe we can take this project in the future / applications</div>
+<div class="code">
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
