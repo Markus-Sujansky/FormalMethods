@@ -7,6 +7,51 @@ From LF Require Import Maps.
 
 (**#<h1>Markus and Jacob Formal Methods Final Project: Proving Tri-atomic Molecular Configurations</h1># *)
 
+(** An introduction to our project:
+
+Our initial goal was to a model a the three-ion molecule system found in nature.
+This describes how groups of three molecules natural settle in a complete state.
+A complete state is described as when the valence (outer) shell of an ion is completely filled with elections.
+Oftentimes, this occurs when 8 elections occupy the outer shell.
+
+In order to do this, ions form bonds between each other. Each bond adds an electron to the valence shell of the two electrons
+beind bonded.
+*)
+
+(** 
+In the first part of our project, we first focused on writing up what the combinations of ions would look like.
+
+# <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PDF Viewer</title>
+</head>
+<body>
+    <!-- Embedding a PDF using <embed> -->
+    <embed src="Picture1.pdf" type="application/pdf" width="100%" height="500px" />
+</body>
+</html> #
+
+We determined at any complete state of 3 ions must have valence electron combinations that match one of the 6 above described combinations.
+
+*)
+
+(** In the next part of our project we translated our write-up into a more formalized pseudocode 
+which we could then completely formalize in coq 
+
+# <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PDF Viewer</title>
+</head>
+<body>
+    <!-- Embedding a PDF using <embed> -->
+    <embed src="Picture2.pdf" type="application/pdf" width="100%" height="500px" />
+</body>
+</html> #
+
+*)
+
 (** This type represents all of the possible elements incolves in the molecular configuration of this project. For ease of 
     process, we have included only Elements in the P and S blocks of the Periodic table. *)
 
