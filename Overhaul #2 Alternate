@@ -167,3 +167,12 @@ Theorem is_eight_eight_eight_possible_implies_correct :
 
          
   
+___________________________________
+
+          - apply Nat.leb_le in Hr. lia.
+        }
+        { inversion H. }
+      * inversion H.
+    + discriminate H_right.
+  - discriminate H_left.
+Qed.
