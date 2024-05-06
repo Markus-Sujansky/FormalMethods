@@ -12,6 +12,7 @@ Require Import Ascii String.
 Require Import Program.
 Require Import String.
 Require Import Coq.Classes.RelationClasses.
+Require Import Coq.Arith.PeanoNat.
 
 
 Inductive Element : Type :=
@@ -64,9 +65,6 @@ Fixpoint make_left_eight (sys: system) (max_steps : nat) : system :=
             end
         end
     end.
-
-
-
 
 Fixpoint make_right_eight (sys: system) (max_steps : nat) : system :=
     match max_steps with
@@ -165,4 +163,7 @@ Theorem is_eight_eight_eight_possible_implies_correct :
       * destruct (le_lt_dec m 8) as [Hm | Hm].
         { destruct (le_lt_dec r 8) as [Hr | Hr].
           - assert (H2: getMiddle (Sys n2 n3 n4) = 8 -> ((n3 =? 8) = true)).
-          { simpl. intros H3. rewrite H3. simpl. reflexivity. }
+          { simpl. intros H3. rewrite H3. simpl. reflexivity. } unfold getMiddle. apply Nat.eqb_eq in H. apply H.
+
+         
+  
