@@ -144,3 +144,20 @@ Fixpoint member (v : system) (s : list system) : bool :=
   | nil => false
   | x :: y => if system_eq v x then true else member v y
   end.
+
+Theorem is_eight_eight_eight_possible_implies_correct :
+    forall sys : system,
+    is_eight_eight_eight_possible sys 100 = true ->
+    getMiddle(make_right_eight(make_left_eight sys 100) 100) = 8.
+  Proof. 
+  intros sys H.
+  unfold is_eight_eight_eight_possible in H.
+  destruct sys as [l m r].
+  destruct (make_left_eight (Sys l m r) 100) eqn: H_left.
+  - destruct (make_right_eight (Sys n n0 n1) 100) eqn: H_right.
+    + simpl in H.
+      destruct (le_lt_dec l 8) as [Hl | Hl].
+      * destruct (le_lt_dec m 8) as [Hm | Hm].
+        { destruct (le_lt_dec r 8) as [Hr | Hr].
+          - assert (H2: getMiddle (Sys n2 n3 n4) = 8 -> ((n3 =? 8) = true)).
+          { simpl. intros H3. rewrite H3. simpl. reflexivity. }
