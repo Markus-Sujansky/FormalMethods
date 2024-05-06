@@ -1,43 +1,64 @@
-From Coq Require Import Bool.Bool.
-From Coq Require Import Init.Nat.
-From Coq Require Import Arith.Arith.
-From Coq Require Import Arith.EqNat. Import Nat.
-From Coq Require Import Lia.
-From Coq Require Import Lists.List. 
-Import ListNotations.
-From Coq Require Import Strings.String.
-From LF Require Import Maps.
 From Coq Require Import List.
-Require Import Ascii String.
-Require Import Program.
-Require Import String.
-Require Import Coq.Classes.RelationClasses.
-Require Import Coq.Arith.PeanoNat.
+Import ListNotations.
+Import Nat.
+From Coq Require Import Arith.Arith.
+From Coq Require Import Arith.EqNat. 
+From LF Require Import Maps.
 
 (**#<h1>Markus and Jacob Formal Methods Final Project</h1># *)
 
+(** This type represents all of the possible elements incolves in the molecular configuration of this project. For ease of 
+    process, we have included only Elements in the P and S blocks of the Periodic table. *)
 
 Inductive Element : Type :=
     | H | He | Li | Be | B | C | N | O | F | Ne | Na | Mg | Al | Si | P | Cl | Ar | K | Ca
     | Ga | Ge | As | Se | Br | Kr | Rb | Sr | In | Sn | Sb | Te | I | Xe | Cs | Ba | Tl | Pb
     | Bi | Po | At | Rn.
 
+(** The type "system" defines a three-number sequence which corresponds to the existing valence electron count for the 
+    three ions in question to be analyzed and dealt with through the later functions of the project. *)
 
-  Inductive system : Type :=
-    | Sys : nat -> nat -> nat -> system.
+Inductive system : Type :=
+  | Sys : nat -> nat -> nat -> system.
 
 
-(* Boolean equality function for B18 *)
+(** The type "Trio", although not implemented outside of the "Molecule Type", represents a tree-element sequence, much like 
+    "system" to represent the three elements of the three ions in question. *)
+
+  Inductive Trio : Type :=
+  | Elm : Element -> Element -> Element -> Trio.
+
+
+(** The type "Molecule" represents a three-ion configuration, and stores the values of both the elements in the molecule, as
+    well as the initial valence electron counts for the three ions, utilizing the "system" and "Trio" types defined above. *)
+
+  Inductive Molecule: Type :=
+  | Mol (t:Trio) (s:system).
+
+
+(** Function defined to emulate the adding of a single bond between the left-most and middle ions in the molecular configuration.
+    Since a bond functionally increases the number of valence electrons in the ion's outermost shell (often housing 8), we can
+    define a function to represent this action by simply incrementing the values in the "system" type of that molecule corresponding
+    to the left and middle ions. *)
 
 Definition left_middle_add (sys: system) : system :=
   match sys with
   | Sys l m r => Sys (S(l)) (S(m)) r
   end.
 
+
+(** Does the same thing as "left_middle_add", except with the middle and right-most ions. *)
+
 Definition right_middle_add (sys: system) : system :=
   match sys with
   | Sys l m r => Sys l (S(m)) (S(r))
   end.
+
+
+(** In our context, an ion is most stable when it's outermost valence shell is fully filled with electrons. To achieve this,
+    Bonding between adjacent ions allows them to "share" one of their valence electrons via a Covalent Bond, allowing both ions
+    involved in the bond to move closer to a filled outer valence shell. The function below checks whether, for the elements for
+    which we have designed the system, all have a filled outermost valence shell, and are, therefore, stable. *)
 
 Definition is_complete_state_system (sys: system) : bool :=
   match sys with
@@ -45,16 +66,26 @@ Definition is_complete_state_system (sys: system) : bool :=
     (l =? 8) && (m =? 8) && (r =? 8)
   end.
 
+(** Checkpoint at which we can see if the above functions and type definitions work. Defining an "example_system" and applying 
+    both "left_middle_add" and "right_middle_add" should, in this case, result in  system values of  modified_system = "Sys 2 3 3"
+    and modified_system' = "Sys 1 3 4". *)
 
 Definition example_system : system := Sys 1 2 3.
-
 Definition modified_system : system := left_middle_add(example_system).
 Definition modified_system': system := right_middle_add(example_system).
-
 Compute modified_system.
 Compute modified_system'.
+
+(** Should Return "false". *)
 Compute is_complete_state_system (Sys 1 2 3).
+
+(** Should Return "true". *)
 Compute is_complete_state_system (Sys 8 8 8).
+
+(** Function to recursively increment the left and middle values of a system until the leftmost valence electron number in "sys"
+    is equal to the outermost shell limit, 8. The use of a "max_steps" nat is to convince Coq that under any normal circumstances,
+    the program will definitively terminate. Should user error occur, and incorrect starting values be inputted, output will be in
+    a format that will make any further analysis impossible. *)
 
 Fixpoint make_left_eight (sys: system) (max_steps : nat) : system :=
     match max_steps with
@@ -63,10 +94,13 @@ Fixpoint make_left_eight (sys: system) (max_steps : nat) : system :=
         | Sys l m r =>
         match l with
             | 8 => sys (* Left value is already 8, return the system *)
-            | _ => make_left_eight (Sys (S(l)) (S(m)) r) n (* Increment left and middle, then recurse *)
+            | _ => make_left_eight (left_middle_add(Sys l m r)) n (* Increment left and middle, then recurse *)
             end
         end
     end.
+
+
+(** Function that performs the exact same process as "make_left_eight", except for the rightmost ion. *)
 
 Fixpoint make_right_eight (sys: system) (max_steps : nat) : system :=
     match max_steps with
@@ -75,12 +109,15 @@ Fixpoint make_right_eight (sys: system) (max_steps : nat) : system :=
         | Sys l m r =>
         match r with
             | 8 => sys (* Left value is already 8, return the system *)
-            | _ => make_right_eight (Sys l (S(m)) (S(r))) n (* Increment left and middle, then recurse *)
+            | _ => make_right_eight (right_middle_add (Sys l m r)) n (* Increment left and middle, then recurse *)
             end
         end
     end.
 
-(* Function to check if the middle is Eight *)
+
+(* Function to check if the middle ion in the configuration is also stable once "make_left_eight" and "make_right_eight" have
+    been called. *)
+
 Definition is_eight_eight_eight_possible (sys: system) (max_steps: nat) : bool :=
   let sys_left_eight := make_left_eight sys max_steps in
   let sys_right_eight := make_right_eight sys_left_eight max_steps in
@@ -94,6 +131,8 @@ Definition example_system2 : system := Sys 5 4 7.
 (* Check if it's possible to get to "eight-eight-eight" *)
 Compute is_eight_eight_eight_possible (example_system2) (100).
 
+(** All possible correct configurations of valence electrons in the three-ions sequence, based on maximum and minumum number of
+    bonds for the middle and peripheral ions. *)
 
 Definition correct_system1 : system := Sys 5 4 7.
 Definition correct_system2 : system := Sys 6 4 6.
@@ -102,9 +141,13 @@ Definition correct_system4 : system := Sys 7 4 5.
 Definition correct_system5 : system := Sys 7 5 6.
 Definition correct_system6 : system := Sys 7 6 7.
 
+(** Two incorrect configurations to show that the functions defined can differentiate between acorrectly oriented system and
+    an incorrect one. *)
+
 Definition incorrect_system1 : system := Sys 7 4 7.
 Definition incorrect_system2 : system := Sys 1 1 2.
 
+(** SHOULD ALL RETURN "true". *)
 Compute is_eight_eight_eight_possible correct_system1 100.
 Compute is_eight_eight_eight_possible correct_system2 100.
 Compute is_eight_eight_eight_possible correct_system3 100.
@@ -112,32 +155,26 @@ Compute is_eight_eight_eight_possible correct_system4 100.
 Compute is_eight_eight_eight_possible correct_system5 100.
 Compute is_eight_eight_eight_possible correct_system6 100.
 
+(** SHOULD BOTH RETURN "false". *)
 Compute is_eight_eight_eight_possible incorrect_system1 100.
 Compute is_eight_eight_eight_possible incorrect_system2 100.
 
-
+(** List of type "List system" that summarizes all possible correct configurations of a tri-ionic molecule. *)
 Definition possible_correct := [correct_system1; correct_system2; correct_system3;
    correct_system4; correct_system5; correct_system6].
 
-Definition is_system_in_possible_correct (sys : system) : bool :=
-    match sys with 
-    | Sys _ _ 0 => false
-    | Sys _ 0 _ => false
-    | Sys 0 _ _ => false
-    | Sys 5 4 7 => true
-    | Sys 6 4 6 => true
-    | Sys 6 5 7 => true
-    | Sys 7 4 5 => true
-    | Sys 7 5 6 => true
-    | Sys 7 6 7 => true
-    | Sys _ _ _ => false
+
+(** Function put into place to be able to deal with independent systems in a comparative manner. *)
+
+Definition system_eq (sys1 sys2 : system) : bool :=
+    match sys1, sys2 with
+    | Sys l1 m1 r1, Sys l2 m2 r2 =>
+        (l1 =? l2) && (m1 =? m2) && (r1 =? r2)
     end.
 
-  Definition system_eq (sys1 sys2 : system) : bool :=
-      match sys1, sys2 with
-      | Sys l1 m1 r1, Sys l2 m2 r2 =>
-        (l1 =? l2) && (m1 =? m2) && (r1 =? r2)
-      end.
+
+(** Function that checks whether a provided system is in a list of systems. Most commonly, this will be
+    used to check whether a system is in the "possible_correct" list. *)
 
 Fixpoint member (v : system) (s : list system) : bool :=
   match s with 
@@ -145,22 +182,43 @@ Fixpoint member (v : system) (s : list system) : bool :=
   | x :: y => if system_eq v x then true else member v y
   end.
 
+
+(** Function to extract the middle valence value of a system. *)
+
   Definition getMiddle (sys : system) : nat :=
     match sys with
     | Sys x y z => y
     end. 
 
-Theorem is_eight_eight_eight_possible_implies_correct :
+
+(** This theorem is intended to prove that the code written for "is_eight_eight_eight_possible" does indeed achieve
+    the purpose for which it was intended. Although all involved functions compile, this just means that Coq doesn't find
+    issue with the way they are written, and does by no means imply that the functions are effective. To ensure that 
+    "is_eight_eight_eight_possible" does indeed, only return values for truly correct molecular configurations, we wanted to 
+    specifically target the value of the middle ion, and test whether a "true" output from the function implied that, for the
+    most crucial ion in the whole configuration, the outermost valence shell was indeed filled, and the ion stable. *)
+
+ Theorem is_eight_eight_eight_possible_implies_correct :
     forall sys : system,
     is_eight_eight_eight_possible sys 100 = true ->
     getMiddle(make_right_eight(make_left_eight sys 100) 100) = 8.
+
 Proof. 
   intros sys H.
-  unfold is_eight_eight_eight_possible in H.
-  destruct sys as [l m r].
-  destruct (make_left_eight (Sys l m r) 100) eqn: H_left.
-  destruct (make_right_eight (Sys n n0 n1) 100) eqn: H_right.
-  simpl in H.
-  unfold getMiddle. apply Nat.eqb_eq in H. simpl. apply H.
-
+  unfold is_eight_eight_eight_possible in H. (** Unfold the function to more easily step through the cases. *)
+  destruct sys as [l m r]. (** Destruct sys to handle the values of left (l), middle (m), and right (r), more directly. *)
+  destruct (make_left_eight (Sys l m r) 100) eqn: H_left. (** Destruct make_left_eight in this context to handle their output directly. *)
+  destruct (make_right_eight (Sys n n0 n1) 100) eqn: H_right. (** Destruct make_left_eight in this context to handle their output directly. *)
+    + simpl in H.
+      destruct (l =? 8). destruct (m =? 8). destruct (r =? 8).
+          - assert (H2: getMiddle (Sys n2 n3 n4) = 8 -> ((n3 =? 8) = true)).
+          { simpl. intros H3. rewrite H3. simpl. reflexivity. } 
+            unfold getMiddle. apply Nat.eqb_eq in H. simpl. apply H. (** Once the proof state has been manipulated to contain the correct hypotheses and context, the proof becomes very easy. *)
+          - unfold getMiddle. apply Nat.eqb_eq in H. simpl. apply H.
+          - unfold getMiddle. apply Nat.eqb_eq in H. simpl. apply H.
+          - unfold getMiddle. apply Nat.eqb_eq in H. simpl. apply H.
+Qed. 
+(** The fact that the proof is so straightforward is indicative of the fact that the functions defined do indeed perform as they
+    were designed to. Thus, the simplicity of the proof is a argument for the system built here to process tri-atomic molecules and
+    their bonding states. *)
   
