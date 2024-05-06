@@ -145,6 +145,11 @@ Fixpoint member (v : system) (s : list system) : bool :=
   | x :: y => if system_eq v x then true else member v y
   end.
 
+  Definition getMiddle (sys : system) : nat :=
+    match sys with
+    | Sys x y z => y
+    end. 
+
 Theorem is_eight_eight_eight_possible_implies_correct :
     forall sys : system,
     is_eight_eight_eight_possible sys 100 = true ->
